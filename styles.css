@@ -51,11 +51,6 @@
         box-shadow: 1px 1px 10px rgb(199, 199, 199);
         cursor: pointer;
     }
-    
-    nav .fas, 
-    nav .far:hover{
-         
-    }
 
     #main {
         display: grid;
@@ -72,13 +67,14 @@
     
     #sidebar li{
         list-style: none;
-/*         padding: 30px; */
+        padding-left: 30px;
         cursor: pointer;
     }
    #sidebar h4{
         margin: 10px 0 8px;
     }
     #sidebar div{
+        opacity: 1;
         text-align: center;
         border-bottom: solid 1px #ececec;
         height: 90px;
@@ -122,4 +118,43 @@
     .highlight {
         background-color: #FFF176;
         transition: background-color 1s;
+    }
+    #sidebar li{
+        animation-name: appear;
+        animation-duration: 2s;
+
+    }
+
+    @keyframes add {
+        from {
+            height: 0px;
+        }
+        to {
+            height: 90px;
+        }
+    }
+    @keyframes remove {
+        from {
+            height: 90px;
+        }
+        to {
+            height: 0px;
+        }
+    }
+    @keyframes visible {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    .show-item {
+        animation-name: visible;
+        animation-duration: 2s;
+    }
+    #sidebar .add-item{
+        animation-name: add;
+        animation-duration: 2s;
     }

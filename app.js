@@ -74,9 +74,16 @@ const model = {
         // Add the note to the notes list (data.notes) 
         // And increase note count
         if (data.isNewNote){
+            
             this.setCurrentNote(note, data.noteId);
             data.notes.push(note);
             view.appendNote(note, data.noteId);
+
+
+            let noteList = view.getNoteList();
+            view.selectNote(noteList[0]);
+            view.selected = noteList[0];
+
             this.increaseNoteCount();
         }
 
@@ -86,7 +93,7 @@ const model = {
             data.notes[currentNote.noteId].snippet = note.snippet;
             data.notes[currentNote.noteId].noteContent = note.noteContent;
             data.notes[currentNote.noteId].date = note.date;
-            view.renderSavedNotes();
+            view.editNote(view.selected, note);
         }
 
         // Update storage with new changes
@@ -123,7 +130,7 @@ const model = {
         data.notes.splice([currentNote.noteId], 1);
         this.decreaseNoteCount();
         data.updateStorage();
-        view.renderSavedNotes();
+        view.removeNote(view.selected);
         this.setCurrentNote({}, null);
         view.clearContentArea();
         data.isNewNote = true;
@@ -148,6 +155,7 @@ const today = document.querySelector('#note time');
 const sideBar = document.querySelector('#sidebar ul');
 
 const view = {
+    selected: '',
     init: function(){
         this.disableButton(formatTools);
         this.disableButton([deleteButton]);
@@ -179,7 +187,7 @@ const view = {
                     heading = heading.substr(0, 18)+'...';
 
                 let nextLine = noteContent.split('\n')[1]
-                console.log(nextLine);
+                // console.log(nextLine);
                     if (nextLine && nextLine.length > 0) 
                         nextLine = nextLine.substr(0, 13)+'...';
                     else
@@ -196,8 +204,7 @@ const view = {
                     date: date
                 };
                 model.saveNote(note);
-                let noteList = view.getNoteList();
-                view.selectNote(noteList[0]);}
+            }
         });
 
         deleteButton.addEventListener('click', function(){
@@ -236,12 +243,11 @@ const view = {
     },
     
     renderSavedNotes: function(){
+        console.log("i ran");
         let noteCount = sideBar.childElementCount;
         if (noteCount > 0){
             sideBar.innerHTML = '';
         }
-        // else
-        //     this.disableButton([deleteButton]);
         let notes = model.getNotes();
      
         if (notes.length > 0){
@@ -250,9 +256,14 @@ const view = {
             }
         }
     },
+    removeNote: function(menuitem){
+        menuitem.remove();
+        this.selected = '';
+    },
     appendNote: function(note, noteId){
         let li = document.createElement('li');
         let time = document.createElement('time');
+        // li.classList.add('')
         time.className = 'date';
         let h4 = document.createElement('h4');
         let div = document.createElement('div');
@@ -270,6 +281,7 @@ const view = {
 
         li.addEventListener('click', function(){
             model.setIsNewNote(false);
+            
             view.deselectNote();
             view.selectNote(li);
             model.setCurrentNote(note, noteId);
@@ -286,11 +298,16 @@ const view = {
                 li.classList.remove('highlight');
         })
     },
-    selectNote: function(note){
-        console.log(note);
-        note.classList.add('highlight');
+    selectNote: function(li){
+        // console.log(note);
+        li.classList.add('highlight');
+        this.selected = li;
     },
-
+    editNote: function(li, note){
+        li.querySelector('div h4').innerHTML = note.snippet.heading;
+        li.querySelector('div p').innerHTML = note.snippet.nextLine;
+        li.querySelector('div time').innerHTML = note.date;
+    },
     enableButton: function(buttons){
         for (button of buttons){
             button.disabled = false;
@@ -311,3 +328,8 @@ const view = {
 
 model.init();
 
+
+// TODO
+// animate render list
+// animate add list item
+// animate remove list item
