@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <title>Document</title>
+</head>
+<body>
+    <header>
+        <h1>Notepad</h1>
+        <nav>
+            <ul id="tools">
+                    
+                <li disabled id="newnote" class="tool" ><i class="far fa-plus-square"></i></li>
+                <li disabled id="bold" class="format"><i class="fas fa-bold"></i></li>
+                <li disabled id="italics" class="format"><i class="fas fa-italic"></i></li>
+                <li disabled id="underline" class="format" ><i class="fas fa-underline"></i></li>
+                <li disabled id="table" class="format"><i class="fas fa-table"></i></li>
+                <li disabled id="list" class="format"><i class="fas fa-list-ul"></i></li>
+                <li disabled id="save" class="format"><i class="fas fa-save"></i></li>
+                <li disabled id="del" class="tool"><i class="far fa-trash-alt"></i></li>
+                
+            </ul>
+        </nav>
+    </header>
+
+    <section id="main">
+        <section id="sidebar">
+            <ul>
+            
+            </ul>
+        </section>
+        <section id="note" >
+            <time></time>
+            <article contenteditable="true"></article>
+        </section>
+    </section>
+</body>
+<script src="app.js"></script>
+</html> 

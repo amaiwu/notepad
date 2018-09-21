@@ -1,0 +1,125 @@
+*{
+    /*     outline: solid 1px red; */
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    }
+    
+    body {
+        min-height: 100vh;
+        background-color: white;
+        color: rgb(70, 70, 70);
+        font-family: sans-serif;
+        font-size: 14px;
+    }
+    
+    header {
+         height: 40px;
+         border-bottom: solid 1px rgb(204, 204, 204);
+         background-color: rgb(224, 224, 224);
+         
+    }
+    
+    header h1{
+        float: left;
+        padding: 10px 30px;
+        color: #d0cdcd;
+        text-shadow: 2px 2px 10px #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+        float: right; 
+    }
+    
+    nav{
+        margin-left: 10%;
+
+    }
+    
+    nav ul{
+        list-style: none;
+    }
+    
+    nav li{
+        display: inline-block;
+        padding: 10px;
+    }
+    
+    nav i{
+        padding: 5px;
+        font-size: 10px;
+        border-radius: 5px;
+        box-shadow: 1px 1px 10px rgb(199, 199, 199);
+        cursor: pointer;
+    }
+    
+    nav .fas, 
+    nav .far:hover{
+         
+    }
+
+    #main {
+        display: grid;
+        min-height: calc(100vh - 11px);
+        grid-template-columns: minmax(200px, 0.5fr) 4fr;
+        color: #6d6d6d;
+        font-size: 14px;
+        font-weight: lighter;
+    }
+    
+    #sidebar {
+        border-right: solid 1px #ececec;
+    }
+    
+    #sidebar li{
+        list-style: none;
+/*         padding: 30px; */
+        cursor: pointer;
+    }
+   #sidebar h4{
+        margin: 10px 0 8px;
+    }
+    #sidebar div{
+        text-align: center;
+        border-bottom: solid 1px #ececec;
+        height: 90px;
+        padding: 10px;
+    }
+    #sidebar time{
+        margin: 10px;
+    }
+
+    hr {
+        float: right;
+        border: none;
+        height: 1px;
+        width: calc(100% - 30px);
+        background-color: #ececec;
+    }
+
+    #note {
+        padding: 30px;
+
+    }
+    
+    #note article{
+        height: 100%;
+        outline: none;
+        line-height: 2em;
+    }
+
+    time{
+        color: #d6d6d6;
+        font-size: 12px;
+        display: block;
+        text-align: center;
+    }
+
+    .disabled {
+        color: #868e94;
+        box-shadow: none;
+    }
+
+    .highlight {
+        background-color: #FFF176;
+        transition: background-color 1s;
+    }
