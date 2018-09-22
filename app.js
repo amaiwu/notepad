@@ -40,6 +40,7 @@ const data = {
 const model = {
     isNewNote: false,
     init: function(){
+        view.hideTableBanner();
         data.init();
         view.init();
     },
@@ -162,6 +163,7 @@ const view = {
         this.disableButton(formatTools);
         this.disableButton([deleteButton]);
         this.renderSavedNotes();
+        // this.hideTableMenu();
         model.isNewNote = true;
 
         let date = model.getFormattedDate();
@@ -227,6 +229,13 @@ const view = {
         contentArea.addEventListener('click',function(){
             view.enableButton(formatTools);            
         });
+
+        tableButton.addEventListener('click', function(){
+            if (tableButton.disabled){
+                return;
+            }
+            view.showTableBanner();
+        })
     },
 
 
@@ -357,6 +366,16 @@ const view = {
         return document.querySelectorAll('#sidebar li');
     },
 
+
+
+    showTableBanner: function(){
+        console.log(tableButton);
+        tableButton.querySelector('.dropdown').style.display = 'grid';
+    },
+    hideTableBanner: function(){
+        console.log(tableButton);
+        tableButton.querySelector('.dropdown').style.display = 'none';
+    }
 }
 
 

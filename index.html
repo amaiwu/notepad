@@ -18,7 +18,32 @@
                 <li disabled id="bold" class="format"><i class="fas fa-bold"></i></li>
                 <li disabled id="italics" class="format"><i class="fas fa-italic"></i></li>
                 <li disabled id="underline" class="format"><i class="fas fa-underline"></i></li>
-                <li disabled id="table" class="format"><i class="fas fa-table"></i></li>
+                <li disabled id="table" class="format">
+                    <i class="fas fa-table"></i>
+                    <div class="dropdown">
+                        <span>
+                            <label for="row">Row:</label>
+                            <input type="text" id="row" value="1">
+                        </span>
+                        
+                        <span>
+                            <label for="column">Column:</label>
+                            <input type="text" id="column" value="1">
+                        </span>
+                        
+                        <span>
+                            <label for="height">Height:</label>
+                            <input type="text" id="height" value="1">
+                        </span>
+                         
+
+                        <span>
+                            <label for="width">Width:</label>
+                            <input type="text" id="width" value="1">
+                        </span>
+                        <button>ok</button>
+                    </div>
+                </li>
                 <li disabled id="list" class="format"><i class="fas fa-list-ul"></i></li>
                 <li disabled id="save" class="format"><i class="fas fa-save"></i></li>
                 <li disabled id="del" class="tool"><i class="far fa-trash-alt"></i></li>
