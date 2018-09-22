@@ -334,9 +334,6 @@
           margin: 0px;
           text-align: center
        }
-       header{
-           grid-row: 2;
-       }
         #sidebar div{
             border-color: #ffffff
         }
