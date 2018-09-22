@@ -40,7 +40,7 @@ const data = {
 const model = {
     isNewNote: false,
     init: function(){
-        view.hideTableBanner();
+        // view.hideTableBanner();
         data.init();
         view.init();
     },
@@ -151,73 +151,83 @@ const model = {
 const newNoteButton = document.querySelector('#newnote');
 const deleteButton = document.querySelector('#del');
 const saveButton = document.querySelector('#save');
+const toolbar = document.querySelector('#tools')
 const formatTools = document.querySelectorAll('#tools .format');
 const contentArea = document.querySelector('#note article');
 const today = document.querySelector('#note time');
 const sideBar = document.querySelector('#sidebar ul');
 const tableButton = document.querySelector('#table');
+const listButton = document.querySelector('#list');
+
+const tableBanner = tableButton.querySelector('.dropdown');
 
 const view = {
+    // 
+    // INIT
+    // 
+
     selected: '',
+    isBannerShown: false,
     init: function(){
-        this.disableButton(formatTools);
+        this.disableFormatTools();
         this.disableButton([deleteButton]);
         this.renderSavedNotes();
-        // this.hideTableMenu();
         model.isNewNote = true;
 
         let date = model.getFormattedDate();
         today.innerText = date;
 
-        newNoteButton.addEventListener('click',function(){
-            view.disableButton([deleteButton]);
-            model.isNewNote = true;
-            view.deselectNote();
-            model.createNote();
-        });
+        this.newNoteButton();
+        this.saveButton();
+        this.deleteButton();
+        this.contentArea();
+        this.tableButton();
+        this.saveButton();
 
+    },
+
+
+    // 
+    // TOOLBAR
+    // 
+
+    enableFormatTools: function(){
+        view.enableButton(formatTools);
+        tableButton.classList.add('showbanner');
+    },
+    disableFormatTools: function(){
+        view.disableButton(formatTools);
+        tableButton.classList.remove('showbanner');
+    },
+    enableButton: function(buttons){
+        for (button of buttons){
+            button.disabled = false;
+            button.firstElementChild.classList.remove('disabled');
+        }
+    },
+    disableButton: function(buttons){
+        for (button of buttons){
+            button.disabled = true;
+            button.firstElementChild.classList.add('disabled');
+        }
+    },
+    saveButton: function(){
         saveButton.addEventListener('click',function(){
             if (saveButton.disabled){
                 return;
             }
  
-            let noteContent = view.getContent();
-            if (noteContent.length === 0){
+            let note = view.getNoteData();
+            if(note === false){
                 return;
             }
-            
-            let heading = noteContent.split('\n')[0];
-            
-            if (heading.length > 15 ){
-                heading = heading.substr(0, 15);
-                heading += '...';
-            }
-
-            let nextLine = noteContent.split('\n')[1]
-        
-                if (nextLine && nextLine.length > 10) {
-                    nextLine = nextLine.substr(0, 10);
-                    nextLine += '...';
-                }
-                else
-                    nextLine = '';
-            let date = model.getDate();
-
-
-            let note = {
-                snippet: {
-                    heading: heading, 
-                    nextLine: nextLine
-                },
-                noteContent: noteContent,
-                date: date
-            };
-            view.disableButton(formatTools); 
+            view.disableFormatTools(); 
             view.enableButton([deleteButton]);
             model.saveNote(note);
             
-        });
-
+        }); 
+    },
+    deleteButton: function(){
         deleteButton.addEventListener('click', function(){
             if (deleteButton.disabled){
                 return;
@@ -225,41 +235,52 @@ const view = {
             view.selected.querySelector('div').classList.add('hide-item');
             view.disableButton([deleteButton])
         })
-
-        contentArea.addEventListener('click',function(){
-            view.enableButton(formatTools);            
+    },
+    newNoteButton: function(){
+        newNoteButton.addEventListener('click',function(){
+            view.disableButton([deleteButton]);
+            model.isNewNote = true;
+            view.deselectNote();
+            model.createNote();
         });
-
-        tableButton.addEventListener('click', function(){
-            if (tableButton.disabled){
-                return;
-            }
-            view.showTableBanner();
-        })
     },
 
 
-    clearContentArea: function(){
-        contentArea.innerText = '';
-    },
-    getContent: function(){
-        return contentArea.innerText;
-    },
-    renderContent: function(content){
-        this.clearContentArea();
-        contentArea.innerText = content;
-    },
-    getAppendedNotes: function(){
-        let notesArray = [];
-        let noteList = view.getNoteList();
-        let notes = noteList;
-        for (note of notes){
-            notesArray.push(note);
+
+    // 
+    // SIDEBAR
+    // 
+
+    createMenuElement: function(note, noteId){
+        let li = document.createElement('li');
+        let time = document.createElement('time');
+        time.className = 'date';
+        let h4 = document.createElement('h4');
+        let div = document.createElement('div');
+        let p = document.createElement('p');
+        h4.innerHTML = note.snippet.heading;
+        p.innerHTML = note.snippet.subHeading;
+
+        time.innerHTML = note.date;
+
+        div.append(h4,p,time);
+        li.dataset.id = noteId;
+        li.append(div);
+        
+        if (model.isNewNote){
+            console.log("yes");
+            li.classList.add('add-item');
+            div.classList.add('show-item');
+
         }
-        notes = notesArray.reverse();
-        return notes;
+        return li;
     },
-    
+    appendNote: function(note, noteId){
+        let li = this.createMenuElement(note, noteId);
+        sideBar.prepend(li);
+        this.openNote(li, note, noteId);
+        this.afterAnimation(li);  
+    },
     renderSavedNotes: function(){
         console.log("i ran");
         let noteCount = sideBar.childElementCount;
@@ -274,66 +295,6 @@ const view = {
             }
         }
     },
-    removeNote: function(menuitem){
-        menuitem.remove();
-        this.selected = '';
-    },
-    appendNote: function(note, noteId){
-        let li = document.createElement('li');
-        let time = document.createElement('time');
-        time.className = 'date';
-        let h4 = document.createElement('h4');
-        let div = document.createElement('div');
-        let p = document.createElement('p');
-        h4.innerHTML = note.snippet.heading;
-        p.innerHTML = note.snippet.nextLine;
-
-        time.innerHTML = note.date;
-
-        div.append(h4,p,time);
-        li.dataset.id = noteId;
-        li.append(div);
-        
-        if (model.isNewNote){
-            console.log("yes");
-            li.classList.add('add-item');
-            div.classList.add('show-item');
-
-        }
-
-        sideBar.prepend(li);
-
-        li.addEventListener('click', function(){
-            model.isNewNote = false;
-            
-            view.deselectNote();
-            view.selectNote(li);
-            model.setCurrentNote(note, noteId);
-            model.displayNote();
-            view.disableButton(formatTools);
-            view.enableButton([deleteButton]);
-        });
-
-        li.addEventListener("animationend", function(){
-            if (li.classList.contains('save-item')){
-                li.classList.remove('save-item');
-            }
-            if (li.classList.contains('add-item')){
-                li.classList.remove('add-item');
-            }
-            if (div.classList.contains('show-item')){
-                div.classList.remove('show-item');
-            }
-            if (li.classList.contains('remove-item')){
-                model.deleteNote();
-            }
-            if (div.classList.contains('hide-item')){
-                div.parentNode.classList.add('remove-item');
-            }
-            
-        }, false);
-    },
-
     deselectNote: function(){
         let noteList = view.getNoteList();
         noteList.forEach(function(li){
@@ -345,37 +306,114 @@ const view = {
         li.classList.add('highlight');
         this.selected = li;
     },
-    editNote: function(li, note){
-        li.querySelector('div h4').innerHTML = note.snippet.heading;
-        li.querySelector('div p').innerHTML = note.snippet.nextLine;
-        li.querySelector('div time').innerHTML = note.date;
-    },
-    enableButton: function(buttons){
-        for (button of buttons){
-            button.disabled = false;
-            button.firstElementChild.classList.remove('disabled');
-        }
-    },
-    disableButton: function(buttons){
-        for (button of buttons){
-            button.disabled = true;
-            button.firstElementChild.classList.add('disabled');
-        }
+    removeNote: function(menuitem){
+        menuitem.remove();
+        this.selected = '';
     },
     getNoteList: function(){
         return document.querySelectorAll('#sidebar li');
     },
-
-
-
-    showTableBanner: function(){
-        console.log(tableButton);
-        tableButton.querySelector('.dropdown').style.display = 'grid';
+    editNote: function(li, note){
+        li.querySelector('div h4').innerHTML = note.snippet.heading;
+        li.querySelector('div p').innerHTML = note.snippet.subHeading;
+        li.querySelector('div time').innerHTML = note.date;
     },
-    hideTableBanner: function(){
-        console.log(tableButton);
-        tableButton.querySelector('.dropdown').style.display = 'none';
-    }
+    openNote: function(li, note, noteId){
+        li.addEventListener('click', function(){
+            model.isNewNote = false; 
+            view.deselectNote();
+            view.selectNote(li);
+            model.setCurrentNote(note, noteId);
+            model.displayNote();
+            view.disableFormatTools();
+            view.enableButton([deleteButton]);
+        });
+    },
+
+    //         
+    // CONTENT 
+    // 
+
+    clearContentArea: function(){
+        contentArea.innerText = '';
+    },
+    getContent: function(){
+        return contentArea.innerText;
+    },
+    renderContent: function(content){
+        this.clearContentArea();
+        contentArea.innerText = content;
+    },
+    getHeading: function(noteContent){
+        let heading = noteContent.split('\n')[0];
+            
+            if (heading.length > 15 ){
+                heading = heading.substr(0, 15);
+                heading += '...';
+            }
+        return heading;
+    },
+    getSubHeading: function(noteContent){
+     
+        let subHeading = noteContent.split('\n')[1]
+    
+            if (subHeading && subHeading.length > 10) {
+                subHeading = subHeading.substr(0, 10);
+                subHeading += '...';
+            }
+            else
+                subHeading = '';
+    return subHeading;
+    },
+    getNoteData: function(){
+        let noteContent = view.getContent();
+            if (noteContent.length === 0){
+                return false;
+            }
+            let heading = this.getHeading(noteContent);
+            let subHeading = this.getSubHeading(noteContent);
+            let date = model.getDate();
+
+            let note = {
+                snippet: {
+                    heading: heading, 
+                    subHeading: subHeading
+                },
+                noteContent: noteContent,
+                date: date
+            };
+            return note;
+    },
+    contentArea: function(){
+        contentArea.addEventListener('click',function(){
+            view.enableFormatTools();            
+        });
+    },
+
+
+    // 
+    // ANIMATION
+    // 
+    afterAnimation: function(li){
+        li.addEventListener("animationend", function(){
+            if (li.classList.contains('save-item')){
+                li.classList.remove('save-item');
+            }
+            if (li.classList.contains('add-item')){
+                li.classList.remove('add-item');
+            }
+            if (li.firstElementChild.classList.contains('show-item')){
+                li.firstElementChild.classList.remove('show-item');
+            }
+            if (li.classList.contains('remove-item')){
+                model.deleteNote();
+            }
+            if (li.firstElementChild.classList.contains('hide-item')){
+                li.classList.add('remove-item');
+            }
+            
+        }, false);
+    },
 }
 
 
