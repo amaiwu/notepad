@@ -1,2 +1,2 @@
 # notepad
-An application for taking and storing notes
+An application for making and storing notes
