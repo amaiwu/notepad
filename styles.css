@@ -136,25 +136,63 @@
     @keyframes remove {
         from {
             height: 90px;
+            visibility: hidden;
         }
         to {
             height: 0px;
         }
     }
-    @keyframes visible {
-        from {
+    @keyframes show {
+        0% {
             opacity: 0;
         }
-        to {
+        100% {
             opacity: 1;
         }
     }
-    
-    .show-item {
-        animation-name: visible;
-        animation-duration: 2s;
+    @keyframes hide {
+        0% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
     }
+     @keyframes save {
+        0% {
+            background-color: #FFF176;
+        }
+        50% {
+            background-color: #FFF9C4;
+            color: rgb(207, 207, 207);
+        }
+        100% {
+            background-color: #FFF176;
+        }
+    }
+    
+    #sidebar .save-item {
+        animation-name: save;
+        animation-duration: 0.5s;
+        animation-fill-mode: backwards;
+    }
+    
+    #sidebar .show-item {
+        animation-name: show;
+        animation-duration: 1s;
+    }
+
+    #sidebar .hide-item {
+        animation-name: hide;
+        animation-duration: 0.2s;
+        animation-fill-mode: forwards;
+    }
+
     #sidebar .add-item{
         animation-name: add;
-        animation-duration: 2s;
+        animation-duration: 0.3s;
+    }
+    #sidebar .remove-item {
+        animation-name: remove;
+        animation-duration: 0.5s;
     }

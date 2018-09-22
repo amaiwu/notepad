@@ -3,7 +3,6 @@ const data = {
         note: {},
         noteId: null
     },
-    isNewNote: true,
     notes: [],
     noteId: 0,
 
@@ -39,6 +38,7 @@ const data = {
 
 // View model
 const model = {
+    isNewNote: false,
     init: function(){
         data.init();
         view.init();
@@ -73,7 +73,7 @@ const model = {
         // If a new note is being created
         // Add the note to the notes list (data.notes) 
         // And increase note count
-        if (data.isNewNote){
+        if (this.isNewNote){
             
             this.setCurrentNote(note, data.noteId);
             data.notes.push(note);
@@ -94,16 +94,20 @@ const model = {
             data.notes[currentNote.noteId].noteContent = note.noteContent;
             data.notes[currentNote.noteId].date = note.date;
             view.editNote(view.selected, note);
+            view.deselectNote(view.selected);
+            view.selected.classList.add('save-item');
+            view.selectNote(view.selected);
+            
         }
 
         // Update storage with new changes
         data.updateStorage(); 
-        data.isNewNote = false;
+        this.isNewNote = false;
     },
 
     // create a new note
     createNote: function(){
-        data.isNewNote = true;
+        this.isNewNote = true;
         this.setCurrentNote({}, null);
         view.clearContentArea();
     },
@@ -133,10 +137,7 @@ const model = {
         view.removeNote(view.selected);
         this.setCurrentNote({}, null);
         view.clearContentArea();
-        data.isNewNote = true;
-    },
-    setIsNewNote: function(bool){
-        data.isNewNote = bool;
+        this.isNewNote = true;
     },
     getDate: function(){
         let date = new Date();
@@ -153,6 +154,7 @@ const formatTools = document.querySelectorAll('#tools .format');
 const contentArea = document.querySelector('#note article');
 const today = document.querySelector('#note time');
 const sideBar = document.querySelector('#sidebar ul');
+const tableButton = document.querySelector('#table');
 
 const view = {
     selected: '',
@@ -160,13 +162,14 @@ const view = {
         this.disableButton(formatTools);
         this.disableButton([deleteButton]);
         this.renderSavedNotes();
+        model.isNewNote = true;
 
         let date = model.getFormattedDate();
         today.innerText = date;
 
         newNoteButton.addEventListener('click',function(){
             view.disableButton([deleteButton]);
-            model.setIsNewNote(true);
+            model.isNewNote = true;
             view.deselectNote();
             model.createNote();
         });
@@ -175,43 +178,49 @@ const view = {
             if (saveButton.disabled){
                 return;
             }
+ 
+            let noteContent = view.getContent();
+            if (noteContent.length === 0){
+                return;
+            }
+            
+            let heading = noteContent.split('\n')[0];
+            
+            if (heading.length > 15 ){
+                heading = heading.substr(0, 15);
+                heading += '...';
+            }
 
+            let nextLine = noteContent.split('\n')[1]
+        
+                if (nextLine && nextLine.length > 10) {
+                    nextLine = nextLine.substr(0, 10);
+                    nextLine += '...';
+                }
+                else
+                    nextLine = '';
+            let date = model.getDate();
+
+
+            let note = {
+                snippet: {
+                    heading: heading, 
+                    nextLine: nextLine
+                },
+                noteContent: noteContent,
+                date: date
+            };
             view.disableButton(formatTools); 
             view.enableButton([deleteButton]);
+            model.saveNote(note);
             
-            let noteContent = view.getContent();
-            if (noteContent){
-                let heading = noteContent.split('\n')[0];
-                
-                if (heading.length > 15 )
-                    heading = heading.substr(0, 18)+'...';
-
-                let nextLine = noteContent.split('\n')[1]
-                // console.log(nextLine);
-                    if (nextLine && nextLine.length > 0) 
-                        nextLine = nextLine.substr(0, 13)+'...';
-                    else
-                        nextLine = '';
-                let date = model.getDate();
-
-
-                let note = {
-                    snippet: {
-                        heading: heading, 
-                        nextLine: nextLine
-                    },
-                    noteContent: noteContent,
-                    date: date
-                };
-                model.saveNote(note);
-            }
         });
 
         deleteButton.addEventListener('click', function(){
             if (deleteButton.disabled){
                 return;
             }
-            model.deleteNote();
+            view.selected.querySelector('div').classList.add('hide-item');
             view.disableButton([deleteButton])
         })
 
@@ -263,7 +272,6 @@ const view = {
     appendNote: function(note, noteId){
         let li = document.createElement('li');
         let time = document.createElement('time');
-        // li.classList.add('')
         time.className = 'date';
         let h4 = document.createElement('h4');
         let div = document.createElement('div');
@@ -277,10 +285,17 @@ const view = {
         li.dataset.id = noteId;
         li.append(div);
         
+        if (model.isNewNote){
+            console.log("yes");
+            li.classList.add('add-item');
+            div.classList.add('show-item');
+
+        }
+
         sideBar.prepend(li);
 
         li.addEventListener('click', function(){
-            model.setIsNewNote(false);
+            model.isNewNote = false;
             
             view.deselectNote();
             view.selectNote(li);
@@ -288,7 +303,26 @@ const view = {
             model.displayNote();
             view.disableButton(formatTools);
             view.enableButton([deleteButton]);
-        })
+        });
+
+        li.addEventListener("animationend", function(){
+            if (li.classList.contains('save-item')){
+                li.classList.remove('save-item');
+            }
+            if (li.classList.contains('add-item')){
+                li.classList.remove('add-item');
+            }
+            if (div.classList.contains('show-item')){
+                div.classList.remove('show-item');
+            }
+            if (li.classList.contains('remove-item')){
+                model.deleteNote();
+            }
+            if (div.classList.contains('hide-item')){
+                div.parentNode.classList.add('remove-item');
+            }
+            
+        }, false);
     },
 
     deselectNote: function(){
@@ -299,7 +333,6 @@ const view = {
         })
     },
     selectNote: function(li){
-        // console.log(note);
         li.classList.add('highlight');
         this.selected = li;
     },
@@ -323,13 +356,9 @@ const view = {
     getNoteList: function(){
         return document.querySelectorAll('#sidebar li');
     },
+
 }
 
 
 model.init();
 
-
-// TODO
-// animate render list
-// animate add list item
-// animate remove list item
