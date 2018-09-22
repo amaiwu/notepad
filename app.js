@@ -158,7 +158,8 @@ const today = document.querySelector('#note time');
 const sideBar = document.querySelector('#sidebar ul');
 const tableButton = document.querySelector('#table');
 const listButton = document.querySelector('#list');
-
+const hamburger = document.querySelector('#hamburger');
+const close = document.querySelector('#close');
 const tableBanner = tableButton.querySelector('.dropdown');
 
 const view = {
@@ -171,6 +172,7 @@ const view = {
     init: function(){
         this.disableFormatTools();
         this.disableButton([deleteButton]);
+
         this.renderSavedNotes();
         model.isNewNote = true;
 
@@ -181,7 +183,7 @@ const view = {
         this.saveButton();
         this.deleteButton();
         this.contentArea();
-        this.tableButton();
+     
         this.saveButton();
 
     },
@@ -197,17 +199,20 @@ const view = {
     },
     disableFormatTools: function(){
         view.disableButton(formatTools);
+
         tableButton.classList.remove('showbanner');
     },
     enableButton: function(buttons){
         for (button of buttons){
             button.disabled = false;
             button.firstElementChild.classList.remove('disabled');
+            button.classList.add('active');
         }
     },
     disableButton: function(buttons){
         for (button of buttons){
             button.disabled = true;
+            button.classList.remove('active');
             button.firstElementChild.classList.add('disabled');
         }
     },
@@ -233,10 +238,11 @@ const view = {
                 return;
             }
             view.selected.querySelector('div').classList.add('hide-item');
-            view.disableButton([deleteButton])
+            view.disableButton([deleteButton]);
         })
     },
     newNoteButton: function(){
+        this.enableButton([newNoteButton]);
         newNoteButton.addEventListener('click',function(){
             view.disableButton([deleteButton]);
             model.isNewNote = true;
@@ -245,12 +251,25 @@ const view = {
         });
     },
 
+    // 
+    // TOOLBAR TABLE
+    // 
 
 
+    
     // 
     // SIDEBAR
     // 
 
+    toggleSidebar: function(){
+        hamburger.addEventListener('click', function(){
+            document.querySelector('#sidebar').style.transform = 'unset';
+        })
+        close.addEventListener('click', function(){
+            console.log('clicked');
+            document.querySelector('#sidebar').style.transform = 'translateX(-100%)';
+        })
+    },
     createMenuElement: function(note, noteId){
         let li = document.createElement('li');
         let time = document.createElement('time');
@@ -294,6 +313,7 @@ const view = {
                 this.appendNote(note, notes.indexOf(note));
             }
         }
+        this.toggleSidebar();
     },
     deselectNote: function(){
         let noteList = view.getNoteList();
