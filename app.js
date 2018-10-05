@@ -38,6 +38,7 @@ const data = {
 
 // View model
 const model = {
+    unsavedNewNote: false,
     isNewNote: false,
     init: function(){
         // view.hideTableBanner();
@@ -76,41 +77,58 @@ const model = {
         // And increase note count
         if (this.isNewNote){
             
-            this.setCurrentNote(note, data.noteId);
+            
             data.notes.push(note);
-            view.appendNote(note, data.noteId);
-
-
+           
             let noteList = view.getNoteList();
+            
             view.selectNote(noteList[0]);
             view.selected = noteList[0];
-
+            
             this.increaseNoteCount();
         }
 
         // Find the existing note, using the noteId
         // And re-render the saved Notes list 
         else {
+    
             data.notes[currentNote.noteId].snippet = note.snippet;
             data.notes[currentNote.noteId].noteContent = note.noteContent;
             data.notes[currentNote.noteId].date = note.date;
-            view.editNote(view.selected, note);
             view.deselectNote(view.selected);
-            view.selected.classList.add('save-item');
             view.selectNote(view.selected);
-            
         }
-
+        view.editNote(view.selected, note);
+        view.selected.classList.add('save-item');
         // Update storage with new changes
         data.updateStorage(); 
+        view.enableButton([newNoteButton])
         this.isNewNote = false;
+        this.unsavedNewNote = false;
     },
 
     // create a new note
     createNote: function(){
         this.isNewNote = true;
-        this.setCurrentNote({}, null);
+        this.unsavedNewNote = true;
+        let note = {
+            snippet: {
+                heading: "New note", 
+                subHeading: ""
+            },
+            noteContent: "",
+            date: this.getDate()
+        };
+        this.setCurrentNote(note, data.noteId);
+        let scrollOffset = -document.querySelector('#sidebar').scrollTop;
+        document.querySelector('#sidebar').scrollBy(0, scrollOffset);
+        view.appendNote(note, data.noteId);
+        
+        let noteList = view.getNoteList();
+        view.selectNote(noteList[0]);
+        // this.setCurrentNote({}, null);
         view.clearContentArea();
+        view.enableButton([deleteButton]);
     },
     // set the current note
     setCurrentNote: function(note, noteId){
@@ -137,8 +155,9 @@ const model = {
         data.updateStorage();
         view.removeNote(view.selected);
         this.setCurrentNote({}, null);
-        view.clearContentArea();
+        
         this.isNewNote = true;
+        view.enableButton([newNoteButton]);
     },
     getDate: function(){
         let date = new Date();
@@ -151,8 +170,8 @@ const model = {
 const newNoteButton = document.querySelector('#newnote');
 const deleteButton = document.querySelector('#del');
 const saveButton = document.querySelector('#save');
-const toolbar = document.querySelector('#tools')
-const formatTools = document.querySelectorAll('#tools .format');
+const toolbar = document.querySelector('#tools');
+const docTools = document.querySelectorAll('#tools .doc-tool');
 const contentArea = document.querySelector('#note article');
 const today = document.querySelector('#note time');
 const sideBar = document.querySelector('#sidebar ul');
@@ -161,6 +180,15 @@ const listButton = document.querySelector('#list');
 const hamburger = document.querySelector('#hamburger');
 const close = document.querySelector('#close');
 const tableBanner = tableButton.querySelector('.dropdown');
+const tableTemplate = document.querySelector('#tableTemplate');
+const addRow = document.querySelector('#addRow');
+const addColumn = document.querySelector('#addColumn');
+const boldButton = document.querySelector('#bold');
+const italicsButton = document.querySelector('#italics');
+const underlineButton = document.querySelector('#underline');
+const table = document.querySelector('table');
+
+
 
 const view = {
     // 
@@ -168,37 +196,44 @@ const view = {
     // 
 
     selected: '',
+    currentTable: null,
     isBannerShown: false,
+    tableRowCount: 2,
+    rowCount: 2,
     init: function(){
-        this.disableFormatTools();
+        this.disableDocTools();
+
         this.disableButton([deleteButton]);
 
         this.renderSavedNotes();
         model.isNewNote = true;
 
         let date = model.getFormattedDate();
-        today.innerText = date;
+        today.innerHTML = date;
 
-        this.newNoteButton();
-        this.saveButton();
-        this.deleteButton();
-        this.contentArea();
-     
-        this.saveButton();
-
+        this.initTools();
+        
+        
     },
 
 
     // 
     // TOOLBAR
     // 
-
-    enableFormatTools: function(){
-        view.enableButton(formatTools);
+    initTools(){
+        this.newNoteButton();
+        this.saveButton();
+        this.deleteButton();
+        this.contentArea();
+        this.formatTools();
+        // this.table();
+    },
+    enableDocTools: function(){
+        view.enableButton(docTools);
         tableButton.classList.add('showbanner');
     },
-    disableFormatTools: function(){
-        view.disableButton(formatTools);
+    disableDocTools: function(){
+        view.disableButton(docTools);
 
         tableButton.classList.remove('showbanner');
     },
@@ -223,10 +258,12 @@ const view = {
             }
  
             let note = view.getNoteData();
+            
+
             if(note === false){
                 return;
             }
-            view.disableFormatTools(); 
+            view.disableDocTools(); 
             view.enableButton([deleteButton]);
             model.saveNote(note);
             
@@ -237,6 +274,7 @@ const view = {
             if (deleteButton.disabled){
                 return;
             }
+            view.clearContentArea();
             view.selected.querySelector('div').classList.add('hide-item');
             view.disableButton([deleteButton]);
         })
@@ -244,17 +282,112 @@ const view = {
     newNoteButton: function(){
         this.enableButton([newNoteButton]);
         newNoteButton.addEventListener('click',function(){
-            view.disableButton([deleteButton]);
+            if (newNoteButton.disabled){
+                return;
+            }
+            view.disableButton([newNoteButton]);
+            
+                contentArea.focus();
+                view.enableDocTools();  
             model.isNewNote = true;
             view.deselectNote();
             model.createNote();
         });
     },
+    formatDoc: function(button, command, value, fn){
+        button.addEventListener('mousedown', function(e){
+            e.preventDefault();
+        });
+        button.addEventListener('click', function(){
+            if (button.disabled){
+                return;
+            }
+            document.execCommand(command,false,value);
+            if (fn){
+                
+                fn();
+            }
+        })
+    },
+    // addButton: function(){
+    //     addButton.addEventListener('click', function)
+    // },
 
+
+    formatTools: function(){
+        let formatTools = [
+            {
+                button: boldButton,
+                command: 'bold',
+                value: null,
+                fn: null
+            },
+            {
+                button: italicsButton,
+                command: 'italic',
+                value: null,
+                fn: null
+            },
+            {
+                button: underlineButton,
+                command: 'underline',
+                value: null,
+                fn: null
+            },
+            {
+                button: listButton,
+                command: 'insertUnorderedList',
+                value: null,
+                fn: null
+            },
+            {
+                button: tableButton,
+                command: 'insertHTML',
+                value: view.createTable(2,2).innerHTML,
+                fn: function(){
+                    document.querySelector('#options').style.display = 'unset';
+                    console.log(view.currentTable);
+                    view.currentTable.addEventListener('click', function(){
+                        console.log('clicked'); 
+                        document.querySelector('#options').style.display = 'unset';
+                    })
+                }
+            }
+
+        ];
+        for(tool of formatTools){
+            this.formatDoc(tool.button, tool.command, tool.value, tool.fn);
+        }
+    },
+
+  
     // 
     // TOOLBAR TABLE
     // 
-
+    createTable: function(row, column){
+        let span = document.createElement('span');
+        let table = document.createElement('table');
+        table.classList = "new-table";
+        for(let i = 0; i < row; i++){
+            let tr = view.createTableRow();
+            for(let i = 0; i < column; i++){
+                let td = view.createTableData();
+                tr.append(td);
+            }
+            table.append(tr);
+        }
+        view.currentTable = table;
+        span.append(table);
+        return span;
+    },
+    createTableData: function(){
+        let td = document.createElement('td');
+        return td;
+    },
+    createTableRow: function(){
+        let tr = document.createElement('tr');
+        return tr;
+    },
 
     
     // 
@@ -266,7 +399,6 @@ const view = {
             document.querySelector('#sidebar').style.transform = 'unset';
         })
         close.addEventListener('click', function(){
-            console.log('clicked');
             document.querySelector('#sidebar').style.transform = 'translateX(-100%)';
         })
     },
@@ -287,7 +419,7 @@ const view = {
         li.append(div);
         
         if (model.isNewNote){
-            console.log("yes");
+          
             li.classList.add('add-item');
             div.classList.add('show-item');
 
@@ -297,17 +429,14 @@ const view = {
     appendNote: function(note, noteId){
         let li = this.createMenuElement(note, noteId);
         sideBar.prepend(li);
-        this.openNote(li, note, noteId);
+
+            this.openNote(li, note, noteId);
+
         this.afterAnimation(li);  
     },
     renderSavedNotes: function(){
-        console.log("i ran");
-        let noteCount = sideBar.childElementCount;
-        if (noteCount > 0){
-            sideBar.innerHTML = '';
-        }
         let notes = model.getNotes();
-     
+       
         if (notes.length > 0){
                 for(note of notes){
                 this.appendNote(note, notes.indexOf(note));
@@ -337,16 +466,33 @@ const view = {
         li.querySelector('div h4').innerHTML = note.snippet.heading;
         li.querySelector('div p').innerHTML = note.snippet.subHeading;
         li.querySelector('div time').innerHTML = note.date;
+        view.openNote(li, note, data.currentNote.noteId);
     },
     openNote: function(li, note, noteId){
         li.addEventListener('click', function(){
+            // save any unsaved note
+            if (model.unsavedNewNote){
+
+                // let noteList = view.getNoteList();
+
+                let unsavedNoteData = view.getNoteData();
+                if(unsavedNoteData === false){
+                   model.deleteNote();
+                }
+                else {
+                    model.saveNote(unsavedNoteData);
+                }
+                model.unsavedNewNote = false;
+            }
+
             model.isNewNote = false; 
             view.deselectNote();
             view.selectNote(li);
             model.setCurrentNote(note, noteId);
             model.displayNote();
-            view.disableFormatTools();
+            view.disableDocTools();
             view.enableButton([deleteButton]);
+              
         });
     },
 
@@ -355,17 +501,17 @@ const view = {
     // 
 
     clearContentArea: function(){
-        contentArea.innerText = '';
+        contentArea.innerHTML = '';
     },
     getContent: function(){
-        return contentArea.innerText;
+        return contentArea.innerHTML;
     },
     renderContent: function(content){
         this.clearContentArea();
-        contentArea.innerText = content;
+        contentArea.innerHTML = content;
     },
     getHeading: function(noteContent){
-        let heading = noteContent.split('\n')[0];
+        let heading = noteContent.split('<div>')[0];
             
             if (heading.length > 15 ){
                 heading = heading.substr(0, 15);
@@ -373,16 +519,29 @@ const view = {
             }
         return heading;
     },
-    getSubHeading: function(noteContent){
-     
-        let subHeading = noteContent.split('\n')[1]
-    
-            if (subHeading && subHeading.length > 10) {
-                subHeading = subHeading.substr(0, 10);
-                subHeading += '...';
+    getSubHeading: function(){
+        let subHeading;
+
+        if (contentArea.childNodes.length > 1){
+           
+            console.log(contentArea.firstElementChild);
+            subHeading = contentArea.childNodes[1].innerText;
+            
+            if (subHeading.length > 0) {
+            
+                if (subHeading.length > 10){ 
+
+                    subHeading = subHeading.substr(0, 10);
+                    subHeading += '...';
+                }
+                else {
+                    subHeading = subHeading;
+                }
             }
-            else
-                subHeading = '';
+        }
+        else {  
+            subHeading = '';
+        }
     return subHeading;
     },
     getNoteData: function(){
@@ -392,6 +551,7 @@ const view = {
             }
             let heading = this.getHeading(noteContent);
             let subHeading = this.getSubHeading(noteContent);
+            
             let date = model.getDate();
 
             let note = {
@@ -402,11 +562,21 @@ const view = {
                 noteContent: noteContent,
                 date: date
             };
+            
             return note;
     },
     contentArea: function(){
+        
         contentArea.addEventListener('click',function(){
-            view.enableFormatTools();            
+            view.enableDocTools(); 
+            if (newNoteButton.disabled){
+                return;
+            }
+            if(model.isNewNote){
+                view.disableButton([newNoteButton]);
+                model.createNote();
+            }
+                       
         });
     },
 
@@ -434,8 +604,44 @@ const view = {
             
         }, false);
     },
+
+
+    // 
+    // TABLE
+    // 
+    // table: function(){
+    //     tableButton.addEventListener('click', function(){
+    //         document.querySelector('#options').style.display = 'unset';
+    //     });
+    //     document.addEventListener('click', function(e){
+    //         if (e.target.className === 'table-cell'){
+                
+    //             document.querySelector('#options').style.display = 'unset';
+    //         }  
+    //     })
+    //     document.addEventListener('keyup', function(e){
+    //         console.log(e.target);
+    //         if(e.target.className === 'table-cell'){
+                
+    //             document.querySelector('#options').style.display = 'unset';
+    //         }
+    //         else {
+    //             document.querySelector('#options').style.display = 'none';
+    //         }   
+    //     })
+    // },
+    
+    addColumn: function(){
+        addColumn.addEventListener('click', function(){
+            // make the banner visible
+            document.querySelector('.before').addEventListener('click', function(){
+                // get the number of rows in the table
+
+                // for each row append a cell before it
+
+            })
+        })
+    }
 }
 
-
 model.init();
-

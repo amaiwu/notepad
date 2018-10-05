@@ -9,64 +9,77 @@
     <title>Notepad</title>
 </head>
 <body>
-    <header>
-        <h1>Notepad</h1>
+    <header>  
         <nav>
+            <h1>Notepad</h1>
             <ul id="tools">
-                    
+                        
                 <li disabled id="newnote" class="tool"><i class="far fa-plus-square"></i></li>
-                <li disabled id="bold" class="format"><i class="fas fa-bold"></i></li>
-                <li disabled id="italics" class="format"><i class="fas fa-italic"></i></li>
-                <li disabled id="underline" class="format"><i class="fas fa-underline"></i></li>
-                <li disabled id="table" class="format">
+                <li disabled id="bold" class="format doc-tool tool"><i class="fas fa-bold"></i></li>
+                <li disabled id="italics" class="format doc-tool tool"><i class="fas fa-italic"></i></li>
+                <li disabled id="underline" class="format doc-tool tool"><i class="fas fa-underline"></i></li>
+                <li disabled id="table" class="format doc-tool tool">
                     <i class="fas fa-table"></i>
-                    <div class="dropdown">
-                        <span>
-                            <label for="row">Row</label>
-                            <input type="text" id="row" value="1">
-                        </span>
-                        
-                        <span>
-                            <label for="column">Column</label>
-                            <input type="text" id="column" value="1">
-                        </span>
-                        
-                        <span>
-                            <label for="height">Height</label>
-                            <input type="text" id="height" value="1">
-                        </span>
-                         
+                    <div id="options">
+                            <span class="altertable" id="add">
+                                <i class="fas fa-plus-circle">
+                                    <ul class="options">
+                                            <li class="above">Add row above</li>
+                                            <li class="below">Add row below</li>
+                                    </ul>
+                                </i>
+                            </span>
 
-                        <span>
-                            <label for="width">Width</label>
-                            <input type="text" id="width" value="1">
-                        </span>
-                        <button>ok</button>
+                            <span class="altertable" id="remove">
+                                <i  class="fas fa-minus-circle" id="addcolumn">
+                                    <ul class="options">
+                                            <li class="before">Add column before</li>
+                                            <li class="after">Add column after</li>
+                                    </ul>
+                                </i>  
+                            </span>
                     </div>
                 </li>
-                <li disabled id="list" class="format"><i class="fas fa-list-ul"></i></li>
-                <li disabled id="save" class="format"><i class="fas fa-save"></i></li>
-                <li disabled id="del" class="tool"><i class="far fa-trash-alt"></i></li>
-                
+                <li disabled id="list" class="format doc-tool tool"><i class="fas fa-list-ul"></i></li>
+                <li disabled id="save" class="doc-tool tool"><i class="fas fa-save"></i></li>
+                <li disabled id="del" class="tool"><i class="far fa-trash-alt"></i></li>   
             </ul>
         </nav>
     </header>
 
     <section id="main">
         <section id="sidebar">
-                
-            <span id="close"><i  class="fas fa-times"></i></span>
-                
-            
-            <ul>
-            
-            </ul>
+            <span id="close">
+                <i  class="fas fa-times"></i>
+            </span>
+            <ul></ul>
         </section>
+
         <section id="note">
-                <i id="hamburger" class="fas fa-bars"></i><time></time>
+                <i id="hamburger" class="fas fa-bars"></i>
+                <time></time>
             <article contenteditable="true"></article>
         </section>
     </section>
+
+    <template id="tableTemplate">
+        <!-- <span>
+                <table class="table"> 
+                        <tbody>
+                            <tr>
+                                <td class="table-cell"></td>
+                                <td class="table-cell"></td>
+                            </tr>
+                            <tr>
+                                <td class="table-cell"></td>
+                                <td class="table-cell"></td>
+                            </tr>
+                        </tbody> 
+                    </table>
+        </span> -->
+                
+    </template>
 </body>
+
 <script src="app.js"></script>
 </html> 
