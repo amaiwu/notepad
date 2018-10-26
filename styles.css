@@ -176,7 +176,7 @@ nav i:hover +.label {
 }
 
 .landing-page-text p {
-    margin: 10px;
+    margin: 30px 10px;
     color: rgb(255, 219, 253);
 }
 
@@ -186,8 +186,8 @@ nav i:hover +.label {
     border-radius: 5px;
     border: none;
     width: 200px;
-    height: 30px;
-    margin: 20px;
+    height: 40px;
+    margin: 10px;
     box-shadow: 0px 5px 10px -5px #281c3f;
     cursor: pointer;
     font-size: 14px;
