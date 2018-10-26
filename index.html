@@ -9,7 +9,7 @@
     <title>Scribble: Take notes</title>
 </head>
 <body>
-    <header >  
+    <header style="display: none" >  
         <nav class="empty">
             <h1>Scribble</h1>
             <ul id="tools">
@@ -26,30 +26,6 @@
                 <li disabled id="underline" class="format doc-tool tool"><i class="fas fa-underline"></i>
                     <div class="tool-label label">Underline</div>
                 </li>
-                <!-- <li disabled id="table" class="format doc-tool tool">
-                    <i class="fas fa-table"></i>
-                    <div class="tool-label label">Table</div>
-                    <div id="options">
-                            <span class="altertable" id="add">
-                                <i class="fas fa-plus-circle">
-                                    <ul class="options">
-                                            <li class="above">Add row above</li>
-                                            <li class="below">Add row below</li>
-                                    </ul>
-                                </i>
-                            </span>
-
-                            <span class="altertable" id="remove">
-                                <i  class="fas fa-minus-circle" id="addcolumn">
-                                    <ul class="options">
-                                            <li class="before">Add column before</li>
-                                            <li class="after">Add column after</li>
-                                    </ul>
-                                </i>  
-                            </span>
-                    </div>
-                    
-                </li> -->
                 <li disabled id="list" class="format doc-tool tool"><i class="fas fa-list-ul"></i>
                     <div class="label tool-label">List</div>
                 </li>
@@ -64,57 +40,62 @@
     </header>
 
     <section id="main">
-        <section id="sidebar" class="empty">
+        <section id="sidebar" class="empty" style="display: none">
             <ul></ul>
         </section>
 
-        <section id="landing-page">
+        <section id="landing-page" style="display: none">
            
-                <div class="landing-page-text">
-                    <h1>A better alternative to your notepad</h1>
-                    <h4>With scribble you can make notes easily on your 
-                        device and access them anytime, anywhere.
-                    </h4>
-                    <p>Let scribble keep track of your ideas</p>
-                    <button class="new-note">Make a note</button>
-                </div>
+            <div class="landing-page-text">
+                <h1>A better alternative to your notepad</h1>
+                <h4>With scribble you can make notes easily on your 
+                    device and access them anytime, anywhere.
+                </h4>
+                <p>Let scribble help keep track of your ideas.</p>
+                <button class="new-note">Make a note</button>
+            </div>
                 
-                <div class="landing-page-image">
-                    <div class="landing-page-image-notepad">
-                            <div class="notepad-image-header"></div>
-                            <div class="notepad-image-main">
-                                <div class="notepad-image-sidebar">
-                                        <li class="highlight">How to...</li><li></li>
-                                    </div>
-                                    <div class="notepad-image-content">
-                                            <time> 21 September, 2018</time>
-                                            <p>
-                                                How to Launch a rocket into space
-                                            </p>
-                                    </div>
+            <div class="landing-page-image">
+                <div class="landing-page-image-notepad">
+                        <div class="notepad-image-header"></div>
+
+                        <div class="notepad-image-main">
+                            <div class="notepad-image-sidebar">
+                                <li class="highlight">How to...</li>
+                                <li></li>
                             </div>
-                            
+
+                            <div class="notepad-image-content">
+                                <time> 21 September, 2018</time>
+                                <p>How to Launch a rocket into space </p>
+                            </div>
                         </div>
-                </div>
+                    </div>
+            </div>
                 
             
         </section>
     
-        <section id="note" style="display: none">
-      
+        <section id="note">
             <span id="hamburger" >
                 <i class="fas fa-bars"></i>
             </span>
                 
-                <span id="close">
-                        <i  class="fas fa-times"></i>
-                    </span>
-                <time></time>
+            <span id="close">
+                    <i  class="fas fa-times"></i>
+            </span>
+
+            <time></time>
+
             <article contenteditable="true"></article>
         </section>
+
     </section>
 
 </body>
 
+<script src="elem.js"></script>
+<script src="dt.js"></script>
+<script src="vm.js"></script>
 <script src="app.js"></script>
 </html> 
