@@ -216,7 +216,7 @@
             background-color: white;
             border-radius: 30px;
             border: solid 20px whitesmoke; 
-            bottom: 100px;
+            top: 280px;
             left: 400px;
             box-shadow: 0px 5px 10px -5px #281c3f;
             background-color: #fff;
@@ -314,7 +314,7 @@
         #hamburger {
             visibility: visible;
             display: none;
-            font-size: 16px;
+            font-size: 14px;
             padding: 30px;
             position: fixed;
             top: 30px;
@@ -351,9 +351,11 @@
         #close {
             color: #7e758f5e;
             padding: 15px 20px;
-            display: block;
+         
             position: fixed;
-            left: 60%;
+            transform: translateX(-60vw);
+            transition: transform .2s linear;
+/*             left: 60%; */
             display: none;
             cursor: pointer;
         }
@@ -455,7 +457,8 @@
             #note, #landing-page {
                 grid-column:1/-1;
                 max-height: calc(100vh - 40px);
-                overflow: scroll;
+                overflow-y: scroll;
+                overflow-x: hidden;
             }
             .landing-page-text{
                 padding: 0 30px;
@@ -476,6 +479,10 @@
               will-change: transform;
               width: 60%;
             }
+
+            #close {
+              display: unset;
+            }
     
             #hamburger {
                 display:unset;
@@ -490,8 +497,15 @@
               margin: 0px;
               text-align: center
            }
+
+           nav ul{
+                margin-left: 0px;
+           }
             #sidebar div{
                 border-color: #ffffff
+            }
+            #note time{
+                margin-top: 20px;
             }
         }
 

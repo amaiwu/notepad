@@ -175,11 +175,11 @@ const docTools = document.querySelectorAll('#tools .doc-tool');
 const contentArea = document.querySelector('#note article');
 const today = document.querySelector('#note time');
 const sideBar = document.querySelector('#sidebar ul');
-const tableButton = document.querySelector('#table .fa-table');
+// const tableButton = document.querySelector('#table .fa-table');
 const listButton = document.querySelector('#list');
 const hamburger = document.querySelector('#hamburger');
 const close = document.querySelector('#close');
-const tableBanner = tableButton.querySelector('.dropdown');
+// const tableBanner = tableButton.querySelector('.dropdown');
 const tableTemplate = document.querySelector('#tableTemplate');
 const addRow = document.querySelector('#addRow');
 const addColumn = document.querySelector('#addColumn');
@@ -237,17 +237,17 @@ const view = {
         this.deleteButton();
         this.contentArea();
         this.formatTools();
-        this.tableButton();
+        // this.tableButton();
         this.firstNoteButton();
     },
     enableDocTools: function(){
         view.enableButton(docTools);
-        tableButton.classList.add('showbanner');
+        // tableButton.classList.add('showbanner');
     },
     disableDocTools: function(){
         view.disableButton(docTools);
 
-        tableButton.classList.remove('showbanner');
+        // tableButton.classList.remove('showbanner');
     },
     enableButton: function(buttons){
         for (button of buttons){
@@ -431,11 +431,14 @@ const view = {
     toggleSidebar: function(){
         hamburger.addEventListener('click', function(){
             document.querySelector('#sidebar').style.transform = 'unset';
-            close.style.display = 'unset';
+            document.querySelector('#close').style.transform = 'translateX(60vw)';
+            view.disableDocTools();
         })
         close.addEventListener('click', function(){
             document.querySelector('#sidebar').style.transform = 'translateX(-100%)';
-            close.style.display = 'none';
+            document.querySelector('#close').style.transform = 'translateX(-60vw)';
+            view.enableDocTools();
+
         })
     },
     createMenuElement: function(note, noteId){
