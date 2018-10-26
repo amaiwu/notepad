@@ -175,7 +175,7 @@ const docTools = document.querySelectorAll('#tools .doc-tool');
 const contentArea = document.querySelector('#note article');
 const today = document.querySelector('#note time');
 const sideBar = document.querySelector('#sidebar ul');
-const tableButton = document.querySelector('#table');
+const tableButton = document.querySelector('#table .fa-table');
 const listButton = document.querySelector('#list');
 const hamburger = document.querySelector('#hamburger');
 const close = document.querySelector('#close');
@@ -186,9 +186,8 @@ const addColumn = document.querySelector('#addColumn');
 const boldButton = document.querySelector('#bold');
 const italicsButton = document.querySelector('#italics');
 const underlineButton = document.querySelector('#underline');
-const table = document.querySelector('table');
-
-
+const firstNoteButton = document.querySelector('.landing-page-text .new-note')
+const toolLabels = document.querySelectorAll('.tool-label');
 
 const view = {
     // 
@@ -200,6 +199,7 @@ const view = {
     isBannerShown: false,
     tableRowCount: 2,
     rowCount: 2,
+    tableCount: 0,
     init: function(){
         this.disableDocTools();
 
@@ -212,6 +212,17 @@ const view = {
         today.innerHTML = date;
 
         this.initTools();
+        
+        if (model.getNotes().length > 0){
+            view.hideLandingPage();
+        }
+        else {
+            view.disableButton([newNoteButton]);
+            
+            for (toolLabel of toolLabels){
+                toolLabel.classList.remove('label');
+            }
+        }
         
         
     },
@@ -226,7 +237,8 @@ const view = {
         this.deleteButton();
         this.contentArea();
         this.formatTools();
-        // this.table();
+        this.tableButton();
+        this.firstNoteButton();
     },
     enableDocTools: function(){
         view.enableButton(docTools);
@@ -294,7 +306,7 @@ const view = {
             model.createNote();
         });
     },
-    formatDoc: function(button, command, value, fn){
+    formatDoc: function(button, command){
         button.addEventListener('mousedown', function(e){
             e.preventDefault();
         });
@@ -302,16 +314,9 @@ const view = {
             if (button.disabled){
                 return;
             }
-            document.execCommand(command,false,value);
-            if (fn){
-                
-                fn();
-            }
+            document.execCommand(command,false);
         })
     },
-    // addButton: function(){
-    //     addButton.addEventListener('click', function)
-    // },
 
 
     formatTools: function(){
@@ -319,54 +324,83 @@ const view = {
             {
                 button: boldButton,
                 command: 'bold',
-                value: null,
-                fn: null
             },
             {
                 button: italicsButton,
                 command: 'italic',
-                value: null,
-                fn: null
             },
             {
                 button: underlineButton,
                 command: 'underline',
-                value: null,
-                fn: null
             },
             {
                 button: listButton,
                 command: 'insertUnorderedList',
-                value: null,
-                fn: null
             },
-            {
-                button: tableButton,
-                command: 'insertHTML',
-                value: view.createTable(2,2).innerHTML,
-                fn: function(){
-                    document.querySelector('#options').style.display = 'unset';
-                    console.log(view.currentTable);
-                    view.currentTable.addEventListener('click', function(){
-                        console.log('clicked'); 
-                        document.querySelector('#options').style.display = 'unset';
-                    })
-                }
-            }
-
         ];
         for(tool of formatTools){
-            this.formatDoc(tool.button, tool.command, tool.value, tool.fn);
+            this.formatDoc(tool.button, tool.command, tool.value);
         }
+    },
+
+    tableButton: function(){
+        tableButton.addEventListener('mousedown', function(e){
+            e.preventDefault();
+        });
+       
+        tableButton.addEventListener('click', function(){
+            if (tableButton.disabled){
+                return;
+            }
+            let tableHTML = view.createTable(2,3, view.tableCount).innerHTML;
+            
+            document.execCommand('insertHTML',false,tableHTML);
+
+            document.querySelector('#options').style.display = 'unset';
+                    let tableId = '#table'+ (view.tableCount);
+                    view.increaseTableCount();
+                    
+                    document.querySelector(tableId).addEventListener('focus', function(){
+                        document.querySelector('#options').style.display = 'unset';
+                    });
+                    document.querySelector(tableId).addEventListener('blur', function(){
+                        console.log("hey");
+                        document.querySelector('#options').style.display = 'none';
+                    });
+        })
+    },
+    hideLandingPage: function() {
+        document.querySelector('#sidebar').classList.remove('empty');
+        document.querySelector('nav').classList.remove('empty');
+        document.querySelector('#landing-page').style.display = 'none';
+        document.querySelector('#note').style.display = 'unset';
+    },
+    firstNoteButton: function(){
+        firstNoteButton.addEventListener('click', function(){
+            view.hideLandingPage();
+            view.disableButton([newNoteButton]);
+            for (toolLabel of toolLabels){
+                toolLabel.classList.add('label');
+            }
+                contentArea.focus();
+                view.enableDocTools();  
+            model.isNewNote = true;
+            view.deselectNote();
+            model.createNote();
+        })
     },
 
   
     // 
     // TOOLBAR TABLE
     // 
-    createTable: function(row, column){
+    increaseTableCount: function(){
+        this.tableCount = this.tableCount + 1;
+    },
+    createTable: function(row, column, id){
         let span = document.createElement('span');
         let table = document.createElement('table');
+        table.id = 'table'+ id;
         table.classList = "new-table";
         for(let i = 0; i < row; i++){
             let tr = view.createTableRow();
@@ -397,9 +431,11 @@ const view = {
     toggleSidebar: function(){
         hamburger.addEventListener('click', function(){
             document.querySelector('#sidebar').style.transform = 'unset';
+            close.style.display = 'unset';
         })
         close.addEventListener('click', function(){
             document.querySelector('#sidebar').style.transform = 'translateX(-100%)';
+            close.style.display = 'none';
         })
     },
     createMenuElement: function(note, noteId){
@@ -492,7 +528,25 @@ const view = {
             model.displayNote();
             view.disableDocTools();
             view.enableButton([deleteButton]);
-              
+
+            // Add event listener for already extisting tables in an already saved note
+
+            let tables = document.querySelectorAll('table');
+            for (table of tables){
+                table.addEventListener('focus', function(e){
+                    event.target.style.background = "pink";
+                    // if (this.className ==='new-table'){
+                    //         console.log("in focus");
+                    //         document.querySelector('#options').style.display = 'unset';
+                    //     }
+                    //     else{
+                    //         console.log("not in focus");
+                    //         document.querySelector('#options').style.display = 'none';}
+                    
+                    },true);
+            }
+        
+            
         });
     },
 
@@ -578,6 +632,14 @@ const view = {
             }
                        
         });
+        // contentArea.addEventListener('focus', function(e){
+            
+        //     if (e.target.className==='new-table'){
+        //         console.log("in focus");
+        //         document.querySelector('#options').style.display = 'unset';}
+        //     else
+        //         document.querySelector('#options').style.display = 'none';
+        // });
     },
 
 
@@ -605,31 +667,6 @@ const view = {
         }, false);
     },
 
-
-    // 
-    // TABLE
-    // 
-    // table: function(){
-    //     tableButton.addEventListener('click', function(){
-    //         document.querySelector('#options').style.display = 'unset';
-    //     });
-    //     document.addEventListener('click', function(e){
-    //         if (e.target.className === 'table-cell'){
-                
-    //             document.querySelector('#options').style.display = 'unset';
-    //         }  
-    //     })
-    //     document.addEventListener('keyup', function(e){
-    //         console.log(e.target);
-    //         if(e.target.className === 'table-cell'){
-                
-    //             document.querySelector('#options').style.display = 'unset';
-    //         }
-    //         else {
-    //             document.querySelector('#options').style.display = 'none';
-    //         }   
-    //     })
-    // },
     
     addColumn: function(){
         addColumn.addEventListener('click', function(){

@@ -6,20 +6,29 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-    <title>Notepad</title>
+    <title>Scribble: Take notes</title>
 </head>
 <body>
-    <header>  
-        <nav>
-            <h1>Notepad</h1>
+    <header >  
+        <nav class="empty">
+            <h1>Scribble</h1>
             <ul id="tools">
                         
-                <li disabled id="newnote" class="tool"><i class="far fa-plus-square"></i></li>
-                <li disabled id="bold" class="format doc-tool tool"><i class="fas fa-bold"></i></li>
-                <li disabled id="italics" class="format doc-tool tool"><i class="fas fa-italic"></i></li>
-                <li disabled id="underline" class="format doc-tool tool"><i class="fas fa-underline"></i></li>
+                <li disabled id="newnote" class="tool"><i class="far fa-plus-square"></i>
+                    <div class="tool-label label">New</div>
+                </li>
+                <li disabled id="bold" class="format doc-tool tool"><i class="fas fa-bold"></i>
+                    <div class="tool-label label">Bold</div>
+                </li>
+                <li disabled id="italics" class="format doc-tool tool"><i class="fas fa-italic"></i>
+                    <div class="tool-label label">Italic</div>
+                </li>
+                <li disabled id="underline" class="format doc-tool tool"><i class="fas fa-underline"></i>
+                    <div class="tool-label label">Underline</div>
+                </li>
                 <li disabled id="table" class="format doc-tool tool">
                     <i class="fas fa-table"></i>
+                    <div class="tool-label label">Table</div>
                     <div id="options">
                             <span class="altertable" id="add">
                                 <i class="fas fa-plus-circle">
@@ -39,46 +48,68 @@
                                 </i>  
                             </span>
                     </div>
+                    
                 </li>
-                <li disabled id="list" class="format doc-tool tool"><i class="fas fa-list-ul"></i></li>
-                <li disabled id="save" class="doc-tool tool"><i class="fas fa-save"></i></li>
-                <li disabled id="del" class="tool"><i class="far fa-trash-alt"></i></li>   
+                <li disabled id="list" class="format doc-tool tool"><i class="fas fa-list-ul"></i>
+                    <div class="label tool-label">List</div>
+                </li>
+                <li disabled id="save" class="doc-tool tool"><i class="fas fa-save"></i>
+                    <div class="label tool-label">Save</div>
+                </li>
+                <li disabled id="del" class="tool"><i class="far fa-trash-alt"></i>
+                    <div class="label tool-label">Delete</div>
+                </li>   
             </ul>
         </nav>
     </header>
 
     <section id="main">
-        <section id="sidebar">
-            <span id="close">
-                <i  class="fas fa-times"></i>
-            </span>
+        <section id="sidebar" class="empty">
             <ul></ul>
         </section>
 
-        <section id="note">
+        <section id="landing-page">
+           
+                <div class="landing-page-text">
+                    <h1>An easy way to write notes</h1>
+                    <h4>Scribble is an application that makes it easy to take notes and access
+                        them from wherever you are.
+                    </h4>
+                    <p>Never forget an idea</p>
+                    <button class="new-note">Create your first note</button>
+                </div>
+                
+                <div class="landing-page-image">
+                    <div class="landing-page-image-notepad">
+                            <div class="notepad-image-header"></div>
+                            <div class="notepad-image-main">
+                                <div class="notepad-image-sidebar">
+                                        <li class="highlight">How to...</li><li></li>
+                                    </div>
+                                    <div class="notepad-image-content">
+                                            <time> 21 September, 2018</time>
+                                            <p>
+                                                How to Launch a rocket into space
+                                            </p>
+                                    </div>
+                            </div>
+                            
+                        </div>
+                </div>
+                
+            
+        </section>
+    
+        <section id="note" style="display: none">
                 <i id="hamburger" class="fas fa-bars"></i>
+                <span id="close">
+                        <i  class="fas fa-times"></i>
+                    </span>
                 <time></time>
             <article contenteditable="true"></article>
         </section>
     </section>
 
-    <template id="tableTemplate">
-        <!-- <span>
-                <table class="table"> 
-                        <tbody>
-                            <tr>
-                                <td class="table-cell"></td>
-                                <td class="table-cell"></td>
-                            </tr>
-                            <tr>
-                                <td class="table-cell"></td>
-                                <td class="table-cell"></td>
-                            </tr>
-                        </tbody> 
-                    </table>
-        </span> -->
-                
-    </template>
 </body>
 
 <script src="app.js"></script>
