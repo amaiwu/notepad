@@ -62,10 +62,7 @@ nav i {
     font-size: 10px;
     border-radius: 5px;
     box-shadow: 1px 1px 10px rgb(199, 199, 199);
-}
-
-nav #table {
-    position: relative;
+    cursor: pointer;
 }
 
 nav .tool-label {
@@ -318,6 +315,7 @@ time {
 .disabled {
     color: #868e94;
     box-shadow: none;
+    cursor: auto;
 }
 
 .highlight {
