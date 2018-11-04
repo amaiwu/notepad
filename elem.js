@@ -17,3 +17,4 @@ const italicsButton = document.querySelector('#italics');
 const underlineButton = document.querySelector('#underline');
 const firstNoteButton = document.querySelector('.landing-page-text .new-note')
 const toolLabels = document.querySelectorAll('.tool-label');
+const imageDate = document.querySelector('.notepad-image-content time');

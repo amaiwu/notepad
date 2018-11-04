@@ -14,7 +14,7 @@ const view = {
 
         let date = model.getFormattedDate();
         today.innerHTML = date;
-
+        imageDate.innerHTML = date
         this.initTools();
         
         if (model.getNotes().length > 0){
@@ -146,13 +146,13 @@ const view = {
     hideLandingPage: function() {
         document.querySelector('#sidebar').style.display = 'unset';
         document.querySelector('header').style.display = 'unset';
-        document.querySelector('#sidebar').classList.remove('empty');
+        document.querySelector('#sidebar').style.display = 'unset';
         document.querySelector('nav').classList.remove('empty');
         document.querySelector('#landing-page').style.display = 'none';
         document.querySelector('#note').style.display = 'unset';
     },
     showLandingPage: function() {
-        document.querySelector('#sidebar').style.display = 'unset';
+        document.querySelector('#sidebar').style.display = 'none';
         document.querySelector('header').style.display = 'unset';
         document.querySelector('#landing-page').style.display = 'unset'
     },

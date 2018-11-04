@@ -145,12 +145,14 @@ nav i:hover +.label {
 /* LANDING-PAGE */
 
 #landing-page {
+    grid-column: 1/-1;
     position: relative;
     height: calc(100vh - 40px);
     background-color: #ad96da;
-    padding: 80px 0;
+    padding: 80px 10%;
     border-left: none;
     overflow-y: hidden;
+    overflow-x: hidden;
     background-image: linear-gradient(to right, #624492 , #6f2d71 85%);
 }
 
@@ -197,7 +199,7 @@ nav i:hover +.label {
     border-radius: 30px;
     border: solid 20px whitesmoke; 
     top: 280px;
-    left: 400px;
+    left: 600px;
     box-shadow: 0px 5px 10px -5px #281c3f;
     background-color: #fff;
     position: absolute;
@@ -264,7 +266,7 @@ nav.empty h1 {
 }
 
 nav.empty i {
-    color: #654765;
+    color: rgba(101, 71, 101, 0.58);
     text-shadow: 2px 2px 10px #401f6e;
 }
 
@@ -442,7 +444,9 @@ time {
         overflow-y: scroll;
         overflow-x: hidden;
     }
-
+    #landing-page {
+        padding: 80px 0;
+    }
     .landing-page-text {
         padding: 0 30px;
     }
@@ -498,4 +502,7 @@ time {
         margin-top: 20px;
     }
 }
+
+
+
 

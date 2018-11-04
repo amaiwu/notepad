@@ -1,3 +1,3 @@
-# Scribble
-An application for making and storing notes.
-[See live page](http:/amaiwu.github.io/notepad)
+# notepad
+An application for making and storing notes, built with HTML, CSS and JavaScript.
+[Scribble](https://amaiwu.github.io/notepad)
